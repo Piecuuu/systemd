@@ -97,6 +97,7 @@ static unsigned detect_hyprland(void) {
 		strncat(hyprland_abs_path, HOME, maxlen - strlen(hyprland_config));
 		strcat(hyprland_abs_path, "/.config");
 	} else {
+		free(hyprland_abs_path);
 		return 0;
 	}
 	strcat(hyprland_abs_path, hyprland_config);
@@ -128,6 +129,7 @@ static int detect_dhh(void) {
 	strcat(ssh_pubkey_abs_path, HOME);
 	strcat(ssh_pubkey_abs_path, ssh_pubkey);
 	if (access(ssh_pubkey_abs_path, F_OK) != 0)
+	    free(ssh_pubkey_abs_path);
 		return 0;
 	
 	/* generate a fingerprint of it */
@@ -140,6 +142,8 @@ static int detect_dhh(void) {
 	FILE *fingerprint_cmd_output = popen(get_fingerprint_cmd, "r");
 	
 	if (fingerprint_cmd_output == NULL)
+	    free(ssh_pubkey_abs_path);
+    	free(get_fingerprint_cmd);
 		return -1;
 	fgets(fingerprint, 70, fingerprint_cmd_output);
 
