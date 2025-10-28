@@ -47,39 +47,39 @@ static int detect_omarchy(void) {
 */
 static unsigned detect_ladybird(void) {
 
-    /* name of the ladybird binary */
-    const char* ladybird_bin = "/ladybird";
+	/* name of the ladybird binary */
+	const char* ladybird_bin = "/ladybird";
 
-    /* check if build variable is available */
-    char* LADYBIRD_SOURCE_DIR = getenv("LADYBIRD_SOURCE_DIR");
-    if (LADYBIRD_SOURCE_DIR != NULL)
-        return 1;
+	/* check if build variable is available */
+	char* LADYBIRD_SOURCE_DIR = getenv("LADYBIRD_SOURCE_DIR");
+	if (LADYBIRD_SOURCE_DIR != NULL)
+		return 1;
 
-    char* PATH = getenv("PATH");
-    if (PATH == NULL)
-        return 0;
+	char* PATH = getenv("PATH");
+	if (PATH == NULL)
+		return 0;
 
 	/* this value will get mutated so we need to duplicate it */
-    char* path = strdup(PATH);
-    /* loop through PATH until we find a file named "ladybird" */
-    char* path_iter = strtok(path, ":");
-    char* abs_path = malloc(256);
-    while (path_iter != NULL) {
-        strncat(abs_path, path_iter, 128);
-        strncat(abs_path, ladybird_bin, 128);
-        /* if we do NOT find the binary at current path, keep going */
-        if (access(abs_path, F_OK) != 0){
-            path_iter = strtok(NULL, ":");
-            abs_path[0] = 0;
-            continue;
-        }
-        free(abs_path);
+	char* path = strdup(PATH);
+	/* loop through PATH until we find a file named "ladybird" */
+	char* path_iter = strtok(path, ":");
+	char* abs_path = malloc(256);
+	while (path_iter != NULL) {
+		strncat(abs_path, path_iter, 128);
+		strncat(abs_path, ladybird_bin, 128);
+		/* if we do NOT find the binary at current path, keep going */
+		if (access(abs_path, F_OK) != 0){
+			path_iter = strtok(NULL, ":");
+			abs_path[0] = 0;
+			continue;
+		}
+		free(abs_path);
 		free(path);
-        return 1;
-    }
+		return 1;
+	}
 	free(abs_path);
 	free(path);
-    return 0;
+	return 0;
 }
 
 /* detects if hyprland is installed */
@@ -115,21 +115,21 @@ static int detect_dhh(void) {
 	const char *dhh_fingerprint = "SHA256:YCKX7xo5Hkihy/NVH5ang8Oty9q8Vvqu4sxI7EbDxPg";
 	/* path to ssh pubkey */
 	const char *ssh_pubkey = "/.ssh/id_ed25519.pub";
-    /* command to generate fingerprint */
-    const char *ssh_fingerpint_cmd = "ssh-keygen -E sha256 -lf ";
+	/* command to generate fingerprint */
+	const char *ssh_fingerpint_cmd = "ssh-keygen -E sha256 -lf ";
 
 	/* get the home directory */
 	char *HOME = getenv("HOME");
-    
+	
 	if (HOME == NULL)
 		return -1;
 	/* check if we have read access to the public key on disk */
-    char *ssh_pubkey_abs_path = (char *)malloc(strlen(HOME) + strlen(ssh_pubkey) + 1);
+	char *ssh_pubkey_abs_path = (char *)malloc(strlen(HOME) + strlen(ssh_pubkey) + 1);
 	ssh_pubkey_abs_path[0] = 0;
 	strcat(ssh_pubkey_abs_path, HOME);
 	strcat(ssh_pubkey_abs_path, ssh_pubkey);
 	if (access(ssh_pubkey_abs_path, F_OK) != 0)
-	    free(ssh_pubkey_abs_path);
+		free(ssh_pubkey_abs_path);
 		return 0;
 	
 	/* generate a fingerprint of it */
@@ -142,8 +142,8 @@ static int detect_dhh(void) {
 	FILE *fingerprint_cmd_output = popen(get_fingerprint_cmd, "r");
 	
 	if (fingerprint_cmd_output == NULL)
-	    free(ssh_pubkey_abs_path);
-    	free(get_fingerprint_cmd);
+		free(ssh_pubkey_abs_path);
+		free(get_fingerprint_cmd);
 		return -1;
 	fgets(fingerprint, 70, fingerprint_cmd_output);
 
@@ -167,17 +167,17 @@ static int help(void) {
 		return log_oom();
 
 	printf("%s [OPTIONS...]\n\n"
-	       "Detect execution in a fascist environment.\n\n"
-	       "  -h --help             Show this help\n"
-	       "     --version          Show package version\n"
+		   "Detect execution in a fascist environment.\n\n"
+		   "  -h --help             Show this help\n"
+		   "     --version          Show package version\n"
 		   "  -q --quiet        	Quiet mode\n"
-	       "  -o --omarchy        	Only detect omarchy\n"
-	       "  -l --ladybird         Only detect ladybird\n"
+		   "  -o --omarchy        	Only detect omarchy\n"
+		   "  -l --ladybird         Only detect ladybird\n"
 		   "  -y --hyprland         Only detect hyprland\n"
 		   "  -d --dhh              Only detect dhh\n"
-	       "\nSee the %s for details.\n",
-	       program_invocation_short_name,
-	       link);
+		   "\nSee the %s for details.\n",
+	 	   program_invocation_short_name,
+		   link);
 
 	return 0;
 }
